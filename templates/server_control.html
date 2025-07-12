@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة سيرفر {{ guild.name }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        .container { background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 800px; width: 100%; text-align: center; }
+        h1 { color: #5c67f2; margin-bottom: 25px; }
+        .warning { color: #dc3545; font-weight: bold; margin-bottom: 20px; background-color: #ffe0e6; padding: 15px; border-radius: 8px; border: 1px solid #dc3545; }
+        form { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+        button {
+            background-color: #5c67f2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover { background-color: #4a54d1; transform: translateY(-2px); }
+        button.danger { background-color: #dc3545; }
+        button.danger:hover { background-color: #c82333; }
+        .back-link { display: block; margin-top: 30px; text-decoration: none; color: #5c67f2; font-weight: bold; font-size: 1.1em; transition: color 0.3s ease; }
+        .back-link:hover { color: #4a54d1; text-decoration: underline; }
+        .result-box {
+            background-color: #e0e7ff;
+            border: 1px solid #a7baff;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 8px;
+            white-space: pre-wrap; /* للحفاظ على تنسيق الأسطر الجديدة */
+            text-align: left;
+            color: #333;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إدارة سيرفر: {{ guild.name }}</h1>
+        <p class="warning">تحذير: هذه العمليات لا يمكن التراجع عنها! استخدمها بحذر شديد.</p>
+
+        {% if result %}
+            <div class="result-box">
+                <h2>نتائج العملية:</h2>
+                <p>{{ result }}</p>
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('server_control', guild_id=guild.id) }}">
+            <button type="submit" name="action" value="delete_channels" class="danger" onclick="return confirm('هل أنت متأكد من حذف جميع القنوات في هذا السيرفر؟ هذا لا يمكن التراجع عنه!');">
+                تنظيف الشاتات (مسح جميع القنوات)
+            </button>
+            <button type="submit" name="action" value="kick_members" class="danger" onclick="return confirm('هل أنت متأكد من طرد جميع الأعضاء من هذا السيرفر؟ هذا لا يمكن التراجع عنه!');">
+                تنظيف الأعضاء (طرد جميع الأعضاء)
+            </button>
+            <button type="submit" name="action" value="delete_roles" class="danger" onclick="return confirm('هل أنت متأكد من حذف جميع الرتب المخصصة في هذا السيرفر؟ هذا لا يمكن التراجع عنه!');">
+                مسح جميع الرتب
+            </button>
+            <button type="submit" name="action" value="delete_emojis_stickers" onclick="alert('لا يمكن للبوت حذف الإيموجي والستيكرات مباشرة عبر API ديسكورد. يجب عليك حذفها يدويًا من إعدادات السيرفر -> الإيموجي/الملصقات.'); return false;">
+                تنظيف الستيكرز والإيموجي (يجب مسحها يدوياً)
+            </button>
+        </form>
+
+        <a href="{{ url_for('index') }}" class="back-link">العودة إلى قائمة السيرفرات</a>
+    </div>
+</body>
+</html>
